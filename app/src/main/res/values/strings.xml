@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">JobTracker</string>
+    <string name="hello">Hello World, SQLiteDemoActivity!</string>
+
+    <string name="gps_disabled">GPS</string>
+    <string name="gps_disabled_title">GPS</string>
+    <string name="enable">Enable</string>
+    <string name="cancel">Cancel</string>
+    <string name="action_settings">Settings</string>
+</resources>
