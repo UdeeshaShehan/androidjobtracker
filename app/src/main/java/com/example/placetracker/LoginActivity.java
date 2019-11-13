@@ -14,6 +14,7 @@ import com.example.placetracker.domain.AuthTokenResponse;
 import com.example.placetracker.domain.Login;
 import com.example.placetracker.retrofit.ApiClient;
 import com.example.placetracker.retrofit.ApiInterface;
+import com.example.placetracker.utility.SessionObject;
 
 import androidx.appcompat.app.AppCompatActivity;
 import retrofit2.Call;
@@ -84,13 +85,13 @@ public class LoginActivity extends AppCompatActivity {
         login(email, password);
     }
 
-    private void login(String email, String password) {
+    private void login(final String email, String password) {
         Login login = new Login(email, password);
 
         Call<AuthTokenResponse> postCall = apiInterface.login(login);
         postCall.enqueue(new Callback<AuthTokenResponse>() {
             @Override
-            public void onResponse(Call<AuthTokenResponse> call, Response<AuthTokenResponse> response) {
+            public void onResponse(Call<AuthTokenResponse> call, final Response<AuthTokenResponse> response) {
                 Log.e(TAG, "onResponse: " + response.body() );
 
                 final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
@@ -102,6 +103,10 @@ public class LoginActivity extends AppCompatActivity {
                         new Runnable() {
                             public void run() {
                                 // On complete call either onLoginSuccess or onLoginFailed
+                                SessionObject.getInstance().setToken("");
+                                        //response.body().getToken());
+                                SessionObject.getInstance().setUsername(response.body().getUsername());
+                                SessionObject.getInstance().setEmail(email);
                                 onLoginSuccess();
                                 // onLoginFailed();
                                 progressDialog.dismiss();

@@ -2,20 +2,21 @@ package com.example.placetracker.utility;
 
 import com.example.placetracker.MainActivity;
 import com.example.placetracker.domain.PlaceSelfie;
+import com.example.placetracker.domain.PlaceSelfieRest;
 
 public class CurrentJob {
     private static CurrentJob currentJob;
-    private PlaceSelfie placeSelfie;
+    private PlaceSelfieRest placeSelfie;
     private MainActivity mainActivity;
 
     private CurrentJob() {
     }
 
-    public PlaceSelfie getPlaceSelfie() {
+    public PlaceSelfieRest getPlaceSelfie() {
         return placeSelfie;
     }
 
-    public void setPlaceSelfie(PlaceSelfie placeSelfie) {
+    public void setPlaceSelfie(PlaceSelfieRest placeSelfie) {
         this.placeSelfie = placeSelfie;
     }
 

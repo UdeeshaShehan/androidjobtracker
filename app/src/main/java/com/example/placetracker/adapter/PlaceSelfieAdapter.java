@@ -13,6 +13,8 @@ import android.widget.Toast;
 import com.example.placetracker.MainActivity;
 import com.example.placetracker.R;
 import com.example.placetracker.domain.PlaceSelfie;
+import com.example.placetracker.domain.PlaceSelfieRest;
+import com.example.placetracker.utility.Commonutility;
 import com.example.placetracker.utility.CurrentJob;
 
 import java.io.ByteArrayInputStream;
@@ -23,10 +25,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class PlaceSelfieAdapter extends RecyclerView.Adapter<PlaceSelfieAdapter.MyViewHolder> {
-    ArrayList<PlaceSelfie> data;
+    ArrayList<PlaceSelfieRest> data;
 
 
-    public PlaceSelfieAdapter(ArrayList<PlaceSelfie> data) {
+    public PlaceSelfieAdapter(ArrayList<PlaceSelfieRest> data) {
         this.data = data;
     }
 
@@ -46,7 +48,7 @@ public class PlaceSelfieAdapter extends RecyclerView.Adapter<PlaceSelfieAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
-        PlaceSelfie selfie = data.get(i);
+        PlaceSelfieRest selfie = data.get(i);
         CurrentJob.getInstance().setPlaceSelfie(selfie);
         myViewHolder.jobName.setText(selfie.getJobName());
         myViewHolder.jobDesc.setText( selfie.getJobDescription());
@@ -58,8 +60,8 @@ public class PlaceSelfieAdapter extends RecyclerView.Adapter<PlaceSelfieAdapter.
         myViewHolder.date.setText( strDate);
 
         //convert byte to bitmap take from contact class
-        if (selfie.getFirstSelfie() != null && selfie.getFirstSelfie().length != 0) {
-            byte[] outImage = selfie.getFirstSelfie();
+        if (selfie.getFirstSelfie() != null && selfie.getFirstSelfie().length() != 0) {
+            byte[] outImage = Commonutility.decodeImage(selfie.getFirstSelfie());
             ByteArrayInputStream imageStream = new ByteArrayInputStream(outImage);
             Bitmap theImage = BitmapFactory.decodeStream(imageStream);
 

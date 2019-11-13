@@ -1,7 +1,6 @@
 package com.example.placetracker;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -12,6 +11,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,10 +33,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.placetracker.adapter.PlaceSelfieAdapter;
-import com.example.placetracker.dao.DataBaseHandler;
 import com.example.placetracker.domain.PlaceSelfie;
+import com.example.placetracker.domain.PlaceSelfieRest;
+import com.example.placetracker.retrofit.SelfieApiClient;
+import com.example.placetracker.retrofit.SelfieApiInterface;
 import com.example.placetracker.services.LocationService;
+import com.example.placetracker.utility.Commonutility;
 import com.example.placetracker.utility.CurrentJob;
+import com.example.placetracker.utility.SessionObject;
 import com.example.placetracker.utility.Utility;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -43,11 +48,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
 
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -72,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     byte[] imageName;
     int imageId;
     Bitmap theImage;
-    DataBaseHandler db;
+    //DataBaseHandler db;
 
     private ArrayList<String> permissionsToRequest;
     private ArrayList permissionsRejected = new ArrayList();
@@ -91,11 +101,14 @@ public class MainActivity extends AppCompatActivity {
     private Button saveUserDataButton = null;
     private Button cancelUserDataButton = null;
 
+    SelfieApiInterface selfieApiInterface;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         CurrentJob.getInstance().setMainActivity(this);
+        selfieApiInterface = SelfieApiClient.getClient(SessionObject.getInstance().getToken()).create(SelfieApiInterface.class);
         //dataList = findViewById(R.id.list);
         recyclerView = findViewById(R.id.my_recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -104,21 +117,36 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        db = new DataBaseHandler(this);
-        ArrayList<PlaceSelfie> placeSelfies = null;
+        //db = new DataBaseHandler(this);
+        final ArrayList<PlaceSelfieRest> placeSelfies = new ArrayList<>();
+
         try {
             //db.deleteAll();
-            placeSelfies = db.getAllPlaceSelfies();
+            selfieApiInterface.getplaceSelfiesByEmail(
+                    SessionObject.getInstance().getEmail()).enqueue(new Callback<List<PlaceSelfieRest>>() {
+                @Override
+                public void onResponse(Call<List<PlaceSelfieRest>> call, Response<List<PlaceSelfieRest>> response) {
+                    List<PlaceSelfieRest> list = response.body();
+                    placeSelfies.addAll(list);
+                    adapter = new PlaceSelfieAdapter(placeSelfies);
+                    recyclerView.setAdapter(adapter);
+                }
+
+                @Override
+                public void onFailure(Call<List<PlaceSelfieRest>> call, Throwable t) {
+
+                }
+            });
+            //placeSelfies = db.getAllPlaceSelfies();
         } catch (Exception e) {
             try {
-                db.onCreate(db.getWritableDatabase());
-                placeSelfies = db.getAllPlaceSelfies();
+               // db.onCreate(db.getWritableDatabase());
+                //placeSelfies = db.getAllPlaceSelfies();
             } catch (Exception e1) {
 
             }
         }
-        adapter = new PlaceSelfieAdapter(placeSelfies);
-        recyclerView.setAdapter(adapter);
+
 
         fab_main = findViewById(R.id.fab);
         fab1 = findViewById(R.id.fab1);
@@ -179,15 +207,19 @@ public class MainActivity extends AppCompatActivity {
                         String jobName = jobNameEditText.getText().toString();
                         String jobDescription = jobDescriptionEditText.getText().toString();
 
-                        PlaceSelfie placeSelfie = db.addSelfie(new PlaceSelfie(null,
+                        PlaceSelfieRest placeSelfie = new PlaceSelfieRest(null,
                                 null, 0.0,
                                 0.0, 0.0, 0.0, null,
-                                null, jobName, 1, jobDescription, new Date()));
+                                null, jobName, 1, jobDescription, new Date(),
+                                SessionObject.getInstance().getUsername(), SessionObject.getInstance().getEmail());
+                        addPlaceSelfieToRest(placeSelfie);
                         CurrentJob.getInstance().setPlaceSelfie(placeSelfie);
                         alertDialog.cancel();
-                        Intent i = new Intent(MainActivity.this,
+                        /*Intent i = new Intent(MainActivity.this,
                                 MainActivity.class);
-                        startActivity(i);
+                        startActivity(i);*/
+                        finish();
+                        startActivity(getIntent());
                     }
                 });
 
@@ -205,6 +237,33 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(), "Refresh jobs", Toast.LENGTH_SHORT).show();
+                try {
+                    //db.deleteAll();
+                    selfieApiInterface.getplaceSelfiesByEmail(
+                            SessionObject.getInstance().getEmail()).enqueue(new Callback<List<PlaceSelfieRest>>() {
+                        @Override
+                        public void onResponse(Call<List<PlaceSelfieRest>> call, Response<List<PlaceSelfieRest>> response) {
+                            placeSelfies.clear();
+                            List<PlaceSelfieRest> list = response.body();
+                            placeSelfies.addAll(list);
+                            adapter = new PlaceSelfieAdapter(placeSelfies);
+                            recyclerView.setAdapter(adapter);
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<PlaceSelfieRest>> call, Throwable t) {
+
+                        }
+                    });
+                    //placeSelfies = db.getAllPlaceSelfies();
+                } catch (Exception e) {
+                    try {
+                        // db.onCreate(db.getWritableDatabase());
+                        //placeSelfies = db.getAllPlaceSelfies();
+                    } catch (Exception e1) {
+
+                    }
+                }
                 //onClickFloatingButton();
             }
         });
@@ -221,6 +280,72 @@ public class MainActivity extends AppCompatActivity {
         }
 
         locationTrack = new LocationService(MainActivity.this);
+    }
+
+    private void addPlaceSelfieToRest(PlaceSelfieRest placeSelfie) {
+        Call<PlaceSelfieRest> postCall = selfieApiInterface.selfieAdd(
+                //"Bearer " + SessionObject.getInstance().getToken() ,
+                placeSelfie
+                );
+        //"Bearer " +
+        postCall.enqueue(new Callback<PlaceSelfieRest>() {
+            @Override
+            public void onResponse(Call<PlaceSelfieRest> call, final Response<PlaceSelfieRest> response) {
+                Log.e(TAG, "onResponse: " + response.body() );
+                Toast.makeText(getBaseContext(), "Added", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call<PlaceSelfieRest> call, Throwable t) {
+                Log.e(TAG, "onFailure: " + t.getLocalizedMessage() );
+                Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+
+            }
+        });
+    }
+
+    private void updatePlaceSelfieToRest(PlaceSelfieRest placeSelfie) {
+        Call<PlaceSelfieRest> putCall = selfieApiInterface.updateSelfie(placeSelfie.getId(),
+                //"Bearer " + SessionObject.getInstance().getToken() ,
+                placeSelfie
+        );
+        //"Bearer " +
+        putCall.enqueue(new Callback<PlaceSelfieRest>() {
+            @Override
+            public void onResponse(Call<PlaceSelfieRest> call, final Response<PlaceSelfieRest> response) {
+                Log.e(TAG, "onResponse: " + response.body() );
+                Toast.makeText(getBaseContext(), "Added", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call<PlaceSelfieRest> call, Throwable t) {
+                Log.e(TAG, "onFailure: " + t.getLocalizedMessage() );
+                Toast.makeText(getBaseContext(), "update" + t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        });
+    }
+
+    private void deletePlaceSelfieToRest(PlaceSelfieRest placeSelfie) {
+        Call<Map<String, Boolean>> putCall = selfieApiInterface.deleteSelfie(placeSelfie.getId()
+                //"Bearer " + SessionObject.getInstance().getToken() ,
+
+        );
+        //"Bearer " +
+        putCall.enqueue(new Callback<Map<String, Boolean>>() {
+            @Override
+            public void onResponse(Call<Map<String, Boolean>> call, Response<Map<String, Boolean>> response) {
+                Log.e(TAG, "onResponse: " + response.body() );
+                Toast.makeText(getBaseContext(), "Added", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Boolean>> call, Throwable t) {
+                Log.e(TAG, "onFailure: " + t.getLocalizedMessage() );
+                Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+
+            }
+        });
     }
 
     private void initPopupViewControls()
@@ -299,11 +424,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void removeItem() {
-        db.deleteSelfie(CurrentJob.getInstance().getPlaceSelfie());
-        Intent i = new Intent(MainActivity.this,
+        //db.deleteSelfie(CurrentJob.getInstance().getPlaceSelfie());
+        deletePlaceSelfieToRest(CurrentJob.getInstance().getPlaceSelfie());
+        finish();
+        startActivity(getIntent());
+        /*Intent i = new Intent(MainActivity.this,
                 MainActivity.class);
         startActivity(i);
-        finish();
+        finish();*/
     }
 
     private void lastCameraIntent()
@@ -487,16 +615,19 @@ public class MainActivity extends AppCompatActivity {
 
             locationTrack.showSettingsAlert();
         }
-        PlaceSelfie placeSelfie = CurrentJob.getInstance().getPlaceSelfie();
-        placeSelfie.setFirstSelfie(imageInByte);
+        PlaceSelfieRest placeSelfie = CurrentJob.getInstance().getPlaceSelfie();
+        placeSelfie.setFirstSelfie(Commonutility.encodeImage(imageInByte));
         placeSelfie.setLatitude1(latitude);
         placeSelfie.setLongitude1(longitude);
         placeSelfie.setFirstSelfieDate(new Date());
-        db.updateSelfie(placeSelfie);
-        Intent i = new Intent(MainActivity.this,
+        updatePlaceSelfieToRest(placeSelfie);
+        //db.updateSelfie(placeSelfie);
+        finish();
+        startActivity(getIntent());
+        /*Intent i = new Intent(MainActivity.this,
                 MainActivity.class);
         startActivity(i);
-        finish();
+        finish();*/
         //ivImage.setImageBitmap(thumbnail);
     }
 
@@ -507,8 +638,8 @@ public class MainActivity extends AppCompatActivity {
         //yourImage.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
         yourImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte imageInByte[] = stream.toByteArray();
-        PlaceSelfie placeSelfie = CurrentJob.getInstance().getPlaceSelfie();
-        placeSelfie.setLastSelfie(imageInByte);
+        PlaceSelfieRest placeSelfie = CurrentJob.getInstance().getPlaceSelfie();
+        placeSelfie.setLastSelfie(Commonutility.encodeImage(imageInByte));
 
         double longitude = 0.0;
         double latitude = 0.0;
@@ -528,11 +659,14 @@ public class MainActivity extends AppCompatActivity {
         placeSelfie.setLatitude2(latitude);
         placeSelfie.setLongitude2(longitude);
         placeSelfie.setLastSelfieDate(new Date());
-        db.updateSelfie(placeSelfie);
-        Intent i = new Intent(MainActivity.this,
+        updatePlaceSelfieToRest(placeSelfie);
+        //db.updateSelfie(placeSelfie);
+        /*Intent i = new Intent(MainActivity.this,
                 MainActivity.class);
         startActivity(i);
+        finish();*/
         finish();
+        startActivity(getIntent());
     }
 
 

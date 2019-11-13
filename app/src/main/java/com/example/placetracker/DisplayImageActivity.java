@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 
 import com.example.placetracker.domain.PlaceSelfie;
+import com.example.placetracker.domain.PlaceSelfieRest;
+import com.example.placetracker.utility.Commonutility;
 import com.example.placetracker.utility.CurrentJob;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -40,7 +42,7 @@ public class DisplayImageActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.display);
 		Intent intent = getIntent();
-		PlaceSelfie placeSelfie = (PlaceSelfie) intent.getExtras().get("selfie");
+		PlaceSelfieRest placeSelfie = (PlaceSelfieRest) intent.getExtras().get("selfie");
 
 		btnSelect = findViewById(R.id.btnmap);
 		btnSelect.setOnClickListener(new View.OnClickListener() {
@@ -76,7 +78,7 @@ public class DisplayImageActivity extends Activity {
 			lang.setText("Latitude : " + placeSelfie.getLatitude1());
 			date.setText("Date Time : " + strDate);
 
-			byte[] outImage = placeSelfie.getFirstSelfie();
+			byte[] outImage = Commonutility.decodeImage(placeSelfie.getFirstSelfie());
 			ByteArrayInputStream imageStream = new ByteArrayInputStream(outImage);
 			Bitmap theImage = BitmapFactory.decodeStream(imageStream);
 			selfie.setImageBitmap(theImage);
@@ -91,7 +93,7 @@ public class DisplayImageActivity extends Activity {
 				strDate= formatter.format(placeSelfie.getLastSelfieDate());
 			}
 			date2.setText("Date Time : " +strDate);
-            byte[] outImage2 = placeSelfie.getLastSelfie();
+            byte[] outImage2 = Commonutility.decodeImage(placeSelfie.getLastSelfie());
             ByteArrayInputStream imageStream2 = new ByteArrayInputStream(outImage2);
             Bitmap theImage2 = BitmapFactory.decodeStream(imageStream2);
             selfie2.setImageBitmap(theImage2);

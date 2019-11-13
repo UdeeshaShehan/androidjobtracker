@@ -1,16 +1,13 @@
 package com.example.placetracker.domain;
 
-import com.example.placetracker.utility.Commonutility;
-import com.example.placetracker.utility.SessionObject;
-
 import java.io.Serializable;
 import java.util.Date;
 
-public class PlaceSelfie implements Serializable {
+public class PlaceSelfieRest implements Serializable {
 
-    private int id;
-    private byte[] firstSelfie;
-    private byte[] lastSelfie;
+    private String id;
+    private String firstSelfie;
+    private String lastSelfie;
     private double latitude1;
     private double longitude1;
     private double latitude2;
@@ -21,12 +18,18 @@ public class PlaceSelfie implements Serializable {
     private int isJobAdded;
     private String jobDescription;
     private Date dateOfJob;
+    private String userName;
+    private String email;
 
-    public PlaceSelfie(int id, byte[] firstSelfie, byte[] lastSelfie, double latitude1,
-                       double longitude1, double latitude2, double longitude2, Date firstSelfieDate,
-                       Date lastSelfieDate, String jobName, int isJobAdded, String jobDescription,
-                       Date dateOfJob) {
-        this.id = id;
+    public PlaceSelfieRest() {
+    }
+
+    public PlaceSelfieRest(String _id, String firstSelfie, String lastSelfie, double latitude1,
+                           double longitude1, double latitude2, double longitude2,
+                           Date firstSelfieDate, Date lastSelfieDate, String jobName,
+                           int isJobAdded, String jobDescription, Date dateOfJob, String userName,
+                           String email) {
+        this.id = _id;
         this.firstSelfie = firstSelfie;
         this.lastSelfie = lastSelfie;
         this.latitude1 = latitude1;
@@ -39,12 +42,15 @@ public class PlaceSelfie implements Serializable {
         this.isJobAdded = isJobAdded;
         this.jobDescription = jobDescription;
         this.dateOfJob = dateOfJob;
+        this.userName = userName;
+        this.email = email;
     }
 
-    public PlaceSelfie( byte[] firstSelfie, byte[] lastSelfie, double latitude1,
-                       double longitude1, double latitude2, double longitude2, Date firstSelfieDate,
-                       Date lastSelfieDate, String jobName, int isJobAdded, String jobDescription,
-                        Date dateOfJob) {
+    public PlaceSelfieRest( String firstSelfie, String lastSelfie, double latitude1,
+                           double longitude1, double latitude2, double longitude2,
+                           Date firstSelfieDate, Date lastSelfieDate, String jobName,
+                           int isJobAdded, String jobDescription, Date dateOfJob, String userName,
+                           String email) {
         this.firstSelfie = firstSelfie;
         this.lastSelfie = lastSelfie;
         this.latitude1 = latitude1;
@@ -57,33 +63,31 @@ public class PlaceSelfie implements Serializable {
         this.isJobAdded = isJobAdded;
         this.jobDescription = jobDescription;
         this.dateOfJob = dateOfJob;
+        this.userName = userName;
+        this.email = email;
     }
 
-    public PlaceSelfie(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public byte[] getFirstSelfie() {
+    public String getFirstSelfie() {
         return firstSelfie;
     }
 
-    public void setFirstSelfie(byte[] firstSelfie) {
+    public void setFirstSelfie(String firstSelfie) {
         this.firstSelfie = firstSelfie;
     }
 
-    public byte[] getLastSelfie() {
+    public String getLastSelfie() {
         return lastSelfie;
     }
 
-    public void setLastSelfie(byte[] lastSelfie) {
+    public void setLastSelfie(String lastSelfie) {
         this.lastSelfie = lastSelfie;
     }
 
@@ -167,15 +171,21 @@ public class PlaceSelfie implements Serializable {
         this.dateOfJob = dateOfJob;
     }
 
-    public PlaceSelfieRest getPlaceSelfieForRest(PlaceSelfieRest placeSelfieRest) {
-        String _id = placeSelfieRest.getId();
-
-        String fs = getFirstSelfie() == null || getFirstSelfie().length == 0 ? "" : Commonutility.encodeImage(firstSelfie);
-        String ls = getLastSelfie() == null || getLastSelfie().length == 0 ? "" : Commonutility.encodeImage(lastSelfie);
-        firstSelfieDate = new Date();
-        lastSelfieDate = new Date();
-        return new PlaceSelfieRest( _id, fs , ls, latitude1,
-        longitude1, latitude2, longitude2, firstSelfieDate, lastSelfieDate, jobName, isJobAdded,
-                jobDescription, dateOfJob, SessionObject.getInstance().getUsername(), SessionObject.getInstance().getEmail());
+    public String getUserName() {
+        return userName;
     }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+
 }
