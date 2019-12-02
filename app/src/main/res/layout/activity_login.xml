@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -18,8 +19,20 @@
             android:layout_marginBottom="24dp"
             android:layout_gravity="center_horizontal" />-->
 
+
+        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+            android:id="@+id/material_spinner1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Select Language"
+            app:met_floatingLabel="normal"
+            android:textColorHint="#CFD8DC"
+            android:gravity="center"
+            />
+
         <!--  Email Label -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -33,6 +46,7 @@
 
         <!--  Password Label -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
