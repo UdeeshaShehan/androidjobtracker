@@ -3,6 +3,7 @@ package com.placetracker;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -18,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,9 +29,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -95,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isGPS = false;
     private Session session;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
         //dataList = findViewById(R.id.list);
         recyclerView = findViewById(R.id.my_recycler_view);
         recyclerView.setHasFixedSize(true);
+
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -134,8 +142,8 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             //db.deleteAll();
-            selfieApiInterface.getplaceSelfiesByEmail(
-                    SessionObject.getInstance().getEmail()).enqueue(new Callback<List<PlaceSelfieRest>>() {
+            selfieApiInterface.getplaceSelfiesByMobileNumber(
+                    SessionObject.getInstance().getMobileNumber()).enqueue(new Callback<List<PlaceSelfieRest>>() {
                 @Override
                 public void onResponse(Call<List<PlaceSelfieRest>> call, Response<List<PlaceSelfieRest>> response) {
                     try {
@@ -226,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
                         PlaceSelfieRest placeSelfie = new PlaceSelfieRest(null,
                                 null, null,null, null,
                                 null, jobName, 1, jobDescription, new Date(),
-                                SessionObject.getInstance().getUsername(), SessionObject.getInstance().getEmail(), null);
+                                SessionObject.getInstance().getUsername(), SessionObject.getInstance().getMobileNumber(), null, SessionObject.getInstance().getMentorMobileNumber() , null, null);
                         addPlaceSelfieToRest(placeSelfie);
                         CurrentJob.getInstance().setPlaceSelfie(placeSelfie);
                         alertDialog.cancel();
@@ -263,8 +271,8 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "Refresh jobs", Toast.LENGTH_SHORT).show();
         try {
             //db.deleteAll();
-            selfieApiInterface.getplaceSelfiesByEmail(
-                    SessionObject.getInstance().getEmail()).enqueue(new Callback<List<PlaceSelfieRest>>() {
+            selfieApiInterface.getplaceSelfiesByMobileNumber(
+                    SessionObject.getInstance().getMobileNumber()).enqueue(new Callback<List<PlaceSelfieRest>>() {
                 @Override
                 public void onResponse(Call<List<PlaceSelfieRest>> call, Response<List<PlaceSelfieRest>> response) {
                     try {
@@ -402,42 +410,91 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickAction() {
-        final CharSequence[] items = { "Take Selfie", "Take End Selfie", "Delete Item", "View", "Cancel" };
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Click Actions!");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                boolean result= Utility.checkPermission(MainActivity.this);
-                if (items[item].equals("Take Selfie")) {
-                    userChoosenTask ="Take Selfie";
-                    if(result)
-                        cameraIntent();
+        if (!session.getLanguage().equals("Sinhala") ) {
+            final CharSequence[] items = {"Take Selfie", "Take End Selfie", "Delete Item", "View", "Cancel"};
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-                } else if (items[item].equals("Take End Selfie")) {
-                    //userChoosenTask ="Take End Selfie";
-                    if(result)
-                        lastCameraIntent();
+            builder.setTitle("Click Actions!");
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
+                    boolean result = Utility.checkPermission(MainActivity.this);
+                    if (items[item].equals("Take Selfie")) {
+                        userChoosenTask = "Take Selfie";
+                        if (result)
+                            cameraIntent();
 
-                } else if (items[item].equals("Delete Item")) {
-                    //userChoosenTask ="Delete Item";
-                    if(result)
-                        removeItem();
+                    } else if (items[item].equals("Take End Selfie")) {
+                        //userChoosenTask ="Take End Selfie";
+                        if (result)
+                            lastCameraIntent();
 
-                } else if (items[item].equals("View")) {
-                    //userChoosenTask ="Delete Item";
-                    if(result) {
-                        Intent intent = new Intent(MainActivity.this, DisplayImageActivity.class);
-                        intent.putExtra("selfie", CurrentJob.getInstance().getPlaceSelfie());
-                        startActivity(intent);
+                    } else if (items[item].equals("Delete Item")) {
+                        //userChoosenTask ="Delete Item";
+                        if (result)
+                            removeItem();
+
+                    } else if (items[item].equals("View")) {
+                        //userChoosenTask ="Delete Item";
+                        if (result) {
+                            Intent intent = new Intent(MainActivity.this, DisplayImageActivity.class);
+                            intent.putExtra("selfie", CurrentJob.getInstance().getPlaceSelfie());
+                            startActivity(intent);
+                        }
+
+                    } else if (items[item].equals("Cancel")) {
+                        dialog.dismiss();
                     }
-
-                } else if (items[item].equals("Cancel")) {
-                    dialog.dismiss();
                 }
-            }
-        });
-        builder.show();
+            });
+            builder.show();
+        } else {
+            final CharSequence[] items = {"m,uq Pdhdremh ,nd.kak", "wjidk Pdhdremh ,nd.kak", "uldoukak", "n,kak", "wj,x.+ lrkak"};
+            final Dialog dialog = new Dialog(MainActivity.this);
+            dialog.setCancelable(false);
+            dialog.setContentView(R.layout.actions);
+
+            ListView listView = dialog.findViewById(R.id.listview);
+
+            ArrayAdapter arrayAdapter = new ArrayAdapter(this,R.layout.list_item, R.id.tv, items);
+            listView.setAdapter(arrayAdapter);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    boolean result = Utility.checkPermission(MainActivity.this);
+                    if (items[position].equals("m,uq Pdhdremh ,nd.kak")) {
+                        userChoosenTask = "Take Selfie";
+                        if (result)
+                            cameraIntent();
+
+                    } else if (items[position].equals("wjidk Pdhdremh ,nd.kak")) {
+                        //userChoosenTask ="Take End Selfie";
+                        if (result)
+                            lastCameraIntent();
+
+                    } else if (items[position].equals("uldoukak")) {
+                        //userChoosenTask ="Delete Item";
+                        if (result)
+                            removeItem();
+
+                    } else if (items[position].equals("n,kak")) {
+                        //userChoosenTask ="Delete Item";
+                        if (result) {
+                            Intent intent = new Intent(MainActivity.this, DisplayImageActivity.class);
+                            intent.putExtra("selfie", CurrentJob.getInstance().getPlaceSelfie());
+                            startActivity(intent);
+                        }
+
+                    } else if (items[position].equals("wj,x.+ lrkak")) {
+                        dialog.dismiss();
+                    }
+                }
+            });
+
+            dialog.show();
+        }
     }
 
     private void removeItem() {
@@ -496,7 +553,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case Utility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && userChoosenTask != null) {
                     if(userChoosenTask.equals("Take Selfie"))
                         cameraIntent();
                     else if(userChoosenTask.equals("Choose from Library"))
@@ -625,7 +682,7 @@ public class MainActivity extends AppCompatActivity {
         double latitude = 0.0;
 
         if (locationTrack.canGetLocation()) {
-
+            //locationTrack.getLocation();
             longitude = locationTrack.getLongitude();
             latitude = locationTrack.getLatitude();
 
@@ -642,6 +699,7 @@ public class MainActivity extends AppCompatActivity {
         placeSelfie.getFirstLocation().setLatitude(latitude);
         placeSelfie.getFirstLocation().setLongitude(longitude);
         placeSelfie.setFirstSelfieDate(new Date());
+        placeSelfie.setAddress1(CommonUtility.getCompleteAddressString(this, latitude, longitude));
         updatePlaceSelfieToRest(placeSelfie);
         scheduleJob();
         //sendBroadcast(new GpsUtils(this).turnOffGPS());
@@ -669,9 +727,10 @@ public class MainActivity extends AppCompatActivity {
         double latitude = 0.0;
 
         if (locationTrack.canGetLocation()) {
-
+            //locationTrack.getLocation();
             longitude = locationTrack.getLongitude();
             latitude = locationTrack.getLatitude();
+            placeSelfie.setAddress2(CommonUtility.getCompleteAddressString(this, latitude, longitude));
 
             Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) +
                     "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
@@ -686,12 +745,6 @@ public class MainActivity extends AppCompatActivity {
         placeSelfie.setLastSelfieDate(new Date());
         updatePlaceSelfieToRest(placeSelfie);
         cancelJob();
-        //sendBroadcast(new GpsUtils(this).turnOffGPS());
-        //db.updateSelfie(placeSelfie);
-        /*Intent i = new Intent(MainActivity.this,
-                MainActivity.class);
-        startActivity(i);
-        finish();*/
         finish();
         startActivity(getIntent());
     }
@@ -728,11 +781,17 @@ public class MainActivity extends AppCompatActivity {
         if (locationTrack != null)
         locationTrack.stopListener();
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
+        if (session.getLanguage().equals("Sinhala") ) {
+            Typeface font = Typeface.createFromAsset(getAssets(), "malithi.TTF");
+            MenuItem menuItem = menu.findItem(R.id.action_logout);
+            View button_menu = menuItem.getActionView();// OR THIS
+            //button_menu.setTypeface(font);
+            //button_menu.setText("msgjkak");
+        }
         return super.onCreateOptionsMenu(menu);
     }
 

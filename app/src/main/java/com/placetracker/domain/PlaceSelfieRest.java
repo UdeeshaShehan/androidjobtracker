@@ -23,7 +23,10 @@ public class PlaceSelfieRest implements Serializable {
     private String jobDescription;
     private Date dateOfJob;
     private String userName;
-    private String email;
+    private String mobileNumber;
+    private String mentorMobileNumber;
+    private String address1;
+    private String address2;
     private List<Location> locations = new ArrayList<>();
 
     public PlaceSelfieRest() {
@@ -33,7 +36,8 @@ public class PlaceSelfieRest implements Serializable {
                            Location lastLocation,
                            Date firstSelfieDate, Date lastSelfieDate, String jobName,
                            int isJobAdded, String jobDescription, Date dateOfJob, String userName,
-                           String email, List<Location> locations) {
+                           String mobileNumber, List<Location> locations, String mentorMobileNumber,
+                           String address1, String address2) {
         this.id = _id;
         this.firstSelfie = firstSelfie;
         this.lastSelfie = lastSelfie;
@@ -50,15 +54,19 @@ public class PlaceSelfieRest implements Serializable {
         this.jobDescription = jobDescription;
         this.dateOfJob = dateOfJob;
         this.userName = userName;
-        this.email = email;
+        this.mobileNumber = mobileNumber;
         this.locations = locations;
+        this.mentorMobileNumber = mentorMobileNumber;
+        this.address1= address1;
+        this.address2 = address2;
     }
 
     public PlaceSelfieRest( String firstSelfie, String lastSelfie, Location firstLocation,
                             Location lastLocation,
                            Date firstSelfieDate, Date lastSelfieDate, String jobName,
                            int isJobAdded, String jobDescription, Date dateOfJob, String userName,
-                           String email, List<Location> locations) {
+                            String mobileNumber, List<Location> locations, String mentorMobileNumber,
+                            String address1, String address2) {
         this.firstSelfie = firstSelfie;
         this.lastSelfie = lastSelfie;
         /*this.latitude1 = latitude1;
@@ -74,8 +82,11 @@ public class PlaceSelfieRest implements Serializable {
         this.jobDescription = jobDescription;
         this.dateOfJob = dateOfJob;
         this.userName = userName;
-        this.email = email;
+        this.mobileNumber = mobileNumber;
         this.locations = locations;
+        this.mentorMobileNumber = mentorMobileNumber;
+        this.address1= address1;
+        this.address2 = address2;
     }
 
     public String getId() {
@@ -214,13 +225,35 @@ public class PlaceSelfieRest implements Serializable {
         this.userName = userName;
     }
 
-    public String getEmail() {
-        return email;
+    public String getMobileNumber() {
+        return mobileNumber;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public String getAddress1() {
+        return address1;
     }
 
+    public void setAddress1(String address1) {
+        this.address1 = address1;
+    }
 
+    public String getAddress2() {
+        return address2;
+    }
+
+    public void setAddress2(String address2) {
+        this.address2 = address2;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public String getMentorMobileNumber() {
+        return mentorMobileNumber;
+    }
+
+    public void setMentorMobileNumber(String mentorMobileNumber) {
+        this.mentorMobileNumber = mentorMobileNumber;
+    }
 }

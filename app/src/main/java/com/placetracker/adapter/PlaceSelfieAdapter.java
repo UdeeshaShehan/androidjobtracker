@@ -56,6 +56,7 @@ public class PlaceSelfieAdapter extends RecyclerView.Adapter<PlaceSelfieAdapter.
         }
         myViewHolder.date.setText( strDate);
 
+
         //convert byte to bitmap take from contact class
         if (selfie.getFirstSelfie() != null && selfie.getFirstSelfie().length() != 0) {
             byte[] outImage = CommonUtility.decodeImage(selfie.getFirstSelfie());
@@ -73,6 +74,9 @@ public class PlaceSelfieAdapter extends RecyclerView.Adapter<PlaceSelfieAdapter.
                 e.printStackTrace();
             }
         }*/
+        if(selfie.getAddress1() != null) {
+            myViewHolder.address.setText(selfie.getAddress1());
+        }
     }
 
     @Override
@@ -89,6 +93,7 @@ public class PlaceSelfieAdapter extends RecyclerView.Adapter<PlaceSelfieAdapter.
         TextView jobName;
         TextView jobDesc;
         TextView date;
+        TextView address;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -99,6 +104,8 @@ public class PlaceSelfieAdapter extends RecyclerView.Adapter<PlaceSelfieAdapter.
             jobDesc.setTextColor(Color.BLUE);
             date = itemView.findViewById(R.id.dateTime);
             date.setTextColor(Color.CYAN);
+            address = itemView.findViewById(R.id.geoaddress);
+            address.setTextColor(Color.CYAN);
         }
 
         @Override

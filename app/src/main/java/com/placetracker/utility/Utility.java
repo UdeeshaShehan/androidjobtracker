@@ -12,9 +12,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-/**
- * Created by Shreya Kotak on 12/05/16.
- */
 public class Utility {
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
 
@@ -50,4 +47,6 @@ public class Utility {
             return true;
         }
     }
+
+
 }

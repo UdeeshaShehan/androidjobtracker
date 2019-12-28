@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -33,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int REQUEST_SIGNUP = 0;
     ApiInterface apiInterface;
 
-    EditText _emailText;
+    EditText _mobileNumberText;
     EditText _passwordText ;
     Button _loginButton ;
     TextView _signupLink;
@@ -50,8 +52,8 @@ public class LoginActivity extends AppCompatActivity {
 
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
         session = new Session(getBaseContext());
-        if (session.getemail() != null && !"".equals(session.getemail()))
-            login(session.getemail(), session.getpassword());
+        if (session.getmobileNumber() != null && !"".equals(session.getmobileNumber()))
+            login(session.getmobileNumber(), session.getpassword());
 
         setContentView(R.layout.activity_login);
         Typeface font = Typeface.createFromAsset(getAssets(), "malithi.TTF");
@@ -62,8 +64,27 @@ public class LoginActivity extends AppCompatActivity {
                 android.R.layout.simple_dropdown_item_1line, SPINNER_DATA);
 
         materialBetterSpinner.setAdapter(adapter);
+        materialBetterSpinner.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        _emailText = findViewById(R.id.input_email);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                session.setLanguage(materialBetterSpinner.getText().toString());
+                Log.d(TAG, materialBetterSpinner.getText().toString());
+                finish();
+                startActivity(getIntent());
+            }
+        });
+
+        _mobileNumberText = findViewById(R.id.input_mobileNumber);
         _passwordText = findViewById(R.id.input_password);
         _loginButton = findViewById(R.id.btn_login);
         _signupLink = findViewById(R.id.link_signup);
@@ -78,9 +99,9 @@ public class LoginActivity extends AppCompatActivity {
         if (session.getLanguage().equals("Sinhala") ) {
             _signupLink.setTypeface(font);
             _loginButton.setTypeface(font);
-            TextInputLayout email = findViewById(R.id.email);
-            email.setTypeface(font);
-            email.setHint("jsoaHq;a ;emE,a ,smskh");
+            TextInputLayout mobile = findViewById(R.id.mobileNumber);
+            mobile.setTypeface(font);
+            mobile.setHint("oqrl;k wxlh");
             TextInputLayout password = findViewById(R.id.password);
             password.setTypeface(font);
             password.setHint("uqr moh");
@@ -111,15 +132,15 @@ public class LoginActivity extends AppCompatActivity {
 
         _loginButton.setEnabled(false);
 
-        String email = _emailText.getText().toString();
+        String email = _mobileNumberText.getText().toString();
         String password = _passwordText.getText().toString();
 
         // TODO: Implement your own authentication logic here.
         login(email, password);
     }
 
-    private void login(final String email, final String password) {
-        Login login = new Login(email, password);
+    private void login(final String mobileNumber, final String password) {
+        Login login = new Login(mobileNumber, password);
 
         Call<AuthTokenResponse> postCall = apiInterface.login(login);
         postCall.enqueue(new Callback<AuthTokenResponse>() {
@@ -142,10 +163,14 @@ public class LoginActivity extends AppCompatActivity {
                                         SessionObject.getInstance().setToken("");
                                         //response.body().getToken());
                                         SessionObject.getInstance().setUsername(response.body().getUsername());
-                                        session.setemail(email);
+                                        //session.setemail(email);
+                                        session.setmobileNumber(mobileNumber);
                                         session.setpassword(password);
-                                        SessionObject.getInstance().setEmail(email);
+                                        SessionObject.getInstance().setMobileNumber(mobileNumber);
+                                        SessionObject.getInstance().setMentorMobileNumber(response.body().getMentorMobileNumber());
+                                        SessionObject.getInstance().setOrganization(response.body().getOrganization());
                                         SessionObject.getInstance().setId(response.body().getId());
+                                        SessionObject.getInstance().setRole(response.body().getRole());
                                         onLoginSuccess();
                                         // onLoginFailed();
                                         progressDialog.dismiss();
@@ -206,14 +231,14 @@ public class LoginActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String email = _emailText.getText().toString();
+        String mobile = _mobileNumberText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _emailText.setError("enter a valid email address");
+        if (mobile.isEmpty() || mobile.length()!=10) {
+            _mobileNumberText.setError("Enter Valid Mobile Number");
             valid = false;
         } else {
-            _emailText.setError(null);
+            _mobileNumberText.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {

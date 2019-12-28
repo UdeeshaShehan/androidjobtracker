@@ -6,6 +6,10 @@ public class SessionObject {
     String token;
     String email;
     String id;
+    String mobileNumber;
+    String mentorMobileNumber;
+    String organization;
+    String role;
 
     private static SessionObject sessionObject;
 
@@ -35,6 +39,38 @@ public class SessionObject {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public String getMentorMobileNumber() {
+        return mentorMobileNumber;
+    }
+
+    public void setMentorMobileNumber(String mentorMobileNumber) {
+        this.mentorMobileNumber = mentorMobileNumber;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public static SessionObject  getInstance(){

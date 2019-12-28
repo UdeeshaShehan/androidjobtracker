@@ -22,6 +22,15 @@ public class Session {
         return email;
     }
 
+    public void setmobileNumber(String mobileNumber) {
+        prefs.edit().putString("mobileNumber", mobileNumber).commit();
+    }
+
+    public String getmobileNumber() {
+        String mobileNumber = prefs.getString("mobileNumber","");
+        return mobileNumber;
+    }
+
     public void setpassword(String password) {
         prefs.edit().putString("password", password).commit();
     }

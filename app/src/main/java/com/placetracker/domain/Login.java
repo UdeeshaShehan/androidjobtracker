@@ -1,23 +1,23 @@
 package com.placetracker.domain;
 
 public class Login {
-    private String email;
+    private String mobileNumber;
     private String password;
 
     public Login() {
     }
 
-    public Login(String email, String password) {
-        this.email = email;
+    public Login(String mobileNumber, String password) {
+        this.mobileNumber = mobileNumber;
         this.password = password;
     }
 
-    public String getEmail() {
-        return email;
+    public String getMobileNumber() {
+        return mobileNumber;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
     }
 
     public String getPassword() {

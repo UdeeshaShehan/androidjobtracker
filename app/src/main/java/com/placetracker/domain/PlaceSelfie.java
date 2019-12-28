@@ -25,6 +25,8 @@ public class PlaceSelfie implements Serializable {
     private int isJobAdded;
     private String jobDescription;
     private Date dateOfJob;
+    private String address1;
+    private String address2;
     private List<Location> locations = new ArrayList<>();
 
     public PlaceSelfie(int id, byte[] firstSelfie, byte[] lastSelfie, Location firstLocation,
@@ -170,6 +172,22 @@ public class PlaceSelfie implements Serializable {
         this.dateOfJob = dateOfJob;
     }
 
+    public String getAddress1() {
+        return address1;
+    }
+
+    public void setAddress1(String address1) {
+        this.address1 = address1;
+    }
+
+    public String getAddress2() {
+        return address2;
+    }
+
+    public void setAddress2(String address2) {
+        this.address2 = address2;
+    }
+
     public PlaceSelfieRest getPlaceSelfieForRest(PlaceSelfieRest placeSelfieRest) {
         String _id = placeSelfieRest.getId();
 
@@ -178,6 +196,7 @@ public class PlaceSelfie implements Serializable {
         firstSelfieDate = new Date();
         lastSelfieDate = new Date();
         return new PlaceSelfieRest( _id, fs , ls, firstLocation, lastLocation, firstSelfieDate, lastSelfieDate, jobName, isJobAdded,
-                jobDescription, dateOfJob, SessionObject.getInstance().getUsername(), SessionObject.getInstance().getEmail(), locations);
+                jobDescription, dateOfJob, SessionObject.getInstance().getUsername(),
+                SessionObject.getInstance().getMobileNumber(), locations, SessionObject.getInstance().getMentorMobileNumber(), address1, address2);
     }
 }

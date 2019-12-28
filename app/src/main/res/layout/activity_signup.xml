@@ -24,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:id="@+id/name"
             android:layout_marginBottom="8dp">
             <EditText android:id="@+id/input_name"
                 android:layout_width="match_parent"
@@ -37,6 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:id="@+id/address"
             android:layout_marginBottom="8dp">
             <EditText android:id="@+id/input_address"
                 android:layout_width="match_parent"
@@ -52,6 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:id="@+id/email"
             android:layout_marginBottom="8dp">
             <EditText android:id="@+id/input_email"
                 android:layout_width="match_parent"
@@ -66,6 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:id="@+id/mobile"
             android:layout_marginBottom="8dp">
             <EditText android:id="@+id/input_mobile"
                 android:layout_width="match_parent"
@@ -79,6 +83,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:id="@+id/password"
             android:layout_marginBottom="8dp">
             <EditText android:id="@+id/input_password"
                 android:layout_width="match_parent"
@@ -92,12 +97,41 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:id="@+id/reEnterPassword"
             android:layout_marginBottom="8dp">
             <EditText android:id="@+id/input_reEnterPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
                 android:hint="Re-enter Password"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:id="@+id/mentorMobileNumber"
+            android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/input_mentorMobileNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="Supervisor Mobile Number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:id="@+id/organization"
+            android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/input_organization"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="Organization"
+                android:text="Default"
+                android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Signup Button -->

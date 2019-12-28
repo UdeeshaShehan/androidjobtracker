@@ -56,7 +56,7 @@ public class LocationJobService extends JobService {
                     return;
                 }
                 if (locationTrack.canGetLocation()) {
-
+                    //locationTrack.getLocation();
                     Double longitude = locationTrack.getLongitude();
                     Double latitude = locationTrack.getLatitude();
                     updateLocation(new Location(longitude, latitude));

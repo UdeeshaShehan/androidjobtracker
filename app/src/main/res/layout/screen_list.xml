@@ -64,6 +64,14 @@
                 android:textSize="14dp"
                 android:textColor="#ffffff"
                 android:layout_marginLeft="7dp" />
+            <TextView
+                android:id="@+id/geoaddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="14dp"
+                android:textColor="#ffffff"
+                android:layout_marginLeft="7dp" />
 
         </LinearLayout>
 

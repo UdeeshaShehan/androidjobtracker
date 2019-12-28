@@ -14,6 +14,7 @@ import com.placetracker.domain.SuccessResponse;
 import com.placetracker.domain.User;
 import com.placetracker.retrofit.ApiClient;
 import com.placetracker.retrofit.ApiInterface;
+import com.placetracker.utility.SessionObject;
 
 import androidx.appcompat.app.AppCompatActivity;
 import retrofit2.Call;
@@ -111,7 +112,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void resetUser(String email, String address, String mobileNumber, String password, String fullname) {
 
-        User user = new User(email, address, mobileNumber, password, fullname);
+        User user = new User(email, address, mobileNumber, password, fullname,
+                SessionObject.getInstance().getMentorMobileNumber(), SessionObject.getInstance().getOrganization());
 
         Call<SuccessResponse> postCall = apiInterface.updateprofile(user);
         postCall.enqueue(new Callback<SuccessResponse>() {

@@ -7,16 +7,21 @@ public class User {
     private String mobileNumber;
     private String password;
     private String fullname;
+    private String mentorMobileNumber;
+    private String organization;
 
     public User() {
     }
 
-    public User(String email, String address, String mobileNumber, String password, String fullname) {
+    public User(String email, String address, String mobileNumber, String password, String fullname,
+                String mentorMobileNumber, String organization) {
         this.email = email;
         this.address = address;
         this.mobileNumber = mobileNumber;
         this.password = password;
         this.fullname = fullname;
+        this.mentorMobileNumber = mentorMobileNumber;
+        this.organization = organization;
     }
 
     public String getEmail() {
@@ -54,4 +59,19 @@ public class User {
         this.mobileNumber = mobileNumber;
     }
 
+    public String getMentorMobileNumber() {
+        return mentorMobileNumber;
+    }
+
+    public void setMentorMobileNumber(String mentorMobileNumber) {
+        this.mentorMobileNumber = mentorMobileNumber;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
+    }
 }

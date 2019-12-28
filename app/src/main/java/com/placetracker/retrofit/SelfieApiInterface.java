@@ -18,10 +18,10 @@ import retrofit2.http.Path;
 
 public interface SelfieApiInterface {
     //@Headers({ "Content-Type: application/json;charset=UTF-8"})
-    @GET("/placeselfie/email/{email}")
-    Call<List<PlaceSelfieRest>> getplaceSelfiesByEmail(
+    @GET("/placeselfie/mobileNumber/{mobileNumber}")
+    Call<List<PlaceSelfieRest>> getplaceSelfiesByMobileNumber(
             //@Header("Authorization") String authHeader,
-            @Path(value = "email") String email) ;
+            @Path(value = "mobileNumber") String mobileNumber) ;
 
     @DELETE("/placeselfie/{id}")
     Call<Map<String, Boolean>> deleteSelfie(@Path(value = "id") String id);
